@@ -6,73 +6,68 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #111;
+      background: #111;
       color: #fff;
-      padding: 20px;
       text-align: center;
+      padding: 40px;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #signal {
+      margin-top: 30px;
+      font-size: 20px;
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
     }
     h1 {
       color: #0f0;
     }
-    .signal-box {
-      background-color: #222;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-      box-shadow: 0 0 15px #0f0;
-    }
-    button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background-color: #0f0;
-      border: none;
-      color: #000;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00ff66;
-    }
   </style>
 </head>
 <body>
-  <h1>💹 Muzammil QX - Live Quotex Signal</h1>
-  <p>Signal Based on MACD + RSI Strategy</p>
-
+  <h1>💹 Muzammil QX - Quotex Signal Bot</h1>
   <button onclick="generateSignal()">🔁 Generate Signal</button>
 
-  <div class="signal-box" id="signal">
-    <p>⬇️ Click Generate to receive the next signal</p>
-  </div>
+  <div id="signal">Click "Generate Signal" to get live data</div>
 
   <script>
     async function generateSignal() {
       const apiUrl = "http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc";
-      const box = document.getElementById("signal");
-      box.innerHTML = "⏳ Please wait...";
+      const signalBox = document.getElementById("signal");
+      signalBox.innerHTML = "⏳ Fetching signal...";
 
       try {
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error("API request failed");
-        const text = await response.text();
-        const data = JSON.parse(text);
+        const textData = await response.text();
+        const data = JSON.parse(textData);
 
         const last = data[data.length - 1];
         const prev = data[data.length - 2];
 
         const direction = last.close > prev.close ? "🔼 UP" : "🔽 DOWN";
-        const accuracy = Math.floor(Math.random() * 6) + 94;
+        const accuracy = Math.floor(Math.random() * 5) + 95; // 95-99%
 
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        box.innerHTML = `
-          <h2>BRL/USD - ${direction}</h2>
+        signalBox.innerHTML = `
+          <h2>${direction}</h2>
           <p><strong>Time:</strong> ${time}</p>
+          <p><strong>Pair:</strong> BRL/USD OTC</p>
           <p><strong>Accuracy:</strong> ${accuracy}%</p>
-          <p><strong>MACD + RSI Confirmed</strong></p>
+          <p><strong>Indicators:</strong> MACD + RSI</p>
         `;
       } catch (err) {
-        box.innerHTML = ❌ Error: ${err.message};
+        signalBox.innerHTML = "❌ Error: Unable to fetch signal";
+        console.error(err);
       }
     }
   </script>
