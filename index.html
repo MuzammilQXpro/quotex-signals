@@ -44,6 +44,11 @@
       background-color: #161b22;
       border: 1px solid #30363d;
     }
+    .signal-box {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -77,6 +82,24 @@
       return Math.random() > 0.5 ? "RSI is oversold (<30) - Buy" : "RSI is overbought (>70) - Sell";
     }
 
+    function getSignalStrength() {
+      return Math.floor(Math.random() * 25) + 70; // 70 to 95%
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let ampm = "AM";
+      if (hours >= 12) {
+        ampm = "PM";
+        if (hours > 12) hours -= 12;
+      }
+      if (hours === 0) hours = 12;
+      if (minutes < 10) minutes = "0" + minutes;
+      return ${hours}:${minutes} ${ampm};
+    }
+
     function generateSignal() {
       const mode = document.getElementById("mode").value;
       const signalsDiv = document.getElementById("signals");
@@ -87,28 +110,38 @@
         const direction = Math.random() > 0.5 ? "Buy ↑" : "Sell ↓";
         const macd = getFakeMACDAnalysis();
         const rsi = getFakeRSIAnalysis();
+        const strength = getSignalStrength();
+        const time = getCurrentTime();
+
         signalsDiv.innerHTML = `
-          <h3>Live Signal</h3>
-          <p><strong>Pair:</strong> ${pair}</p>
-          <p><strong>Direction:</strong> ${direction}</p>
-          <p><strong>MACD:</strong> ${macd}</p>
-          <p><strong>RSI:</strong> ${rsi}</p>
-          <p><strong>Timeframe:</strong> 1 Minute</p>
+          <div class="signal-box">
+            <h3>📡 Live Signal</h3>
+            <p><strong>Time:</strong> ${time}</p>
+            <p><strong>Pair:</strong> ${pair}</p>
+            <p><strong>Direction:</strong> ${direction}</p>
+            <p><strong>MACD:</strong> ${macd}</p>
+            <p><strong>RSI:</strong> ${rsi}</p>
+            <p><strong>Signal Strength:</strong> ${strength}%</p>
+            <p><strong>Timeframe:</strong> 1 Minute</p>
+          </div>
         `;
       } else {
-        signalsDiv.innerHTML = "<h3>Future Signals (Next 10)</h3>";
+        signalsDiv.innerHTML = "<h3>📅 Future Signals (Next 10)</h3>";
         for (let i = 1; i <= 10; i++) {
           const pair = getRandomPair();
           const direction = Math.random() > 0.5 ? "Buy ↑" : "Sell ↓";
           const macd = getFakeMACDAnalysis();
           const rsi = getFakeRSIAnalysis();
+          const strength = getSignalStrength();
+          const time = getCurrentTime();
           signalsDiv.innerHTML += `
-            <div style="margin-bottom:15px;">
-              <p><strong>#${i} - ${pair}</strong></p>
+            <div class="signal-box">
+              <p><strong>#${i} | ${pair} | ${time}</strong></p>
               <p>Direction: ${direction}</p>
               <p>MACD: ${macd}</p>
               <p>RSI: ${rsi}</p>
-              <hr style="border-color:#30363d;"/>
+              <p>Signal Strength: ${strength}%</p>
+              <p>Timeframe: 1 Minute</p>
             </div>
           `;
         }
