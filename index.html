@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -52,13 +52,14 @@
   <h1>📡 Muzammil QX Signals</h1>
 
   <div>
-    <button onclick="setMode('live')">📍 Live Signal</button>
-    <button onclick="setMode('future')">⏳ Future Signals</button>
-    <button onclick="generateSignal()">⚡ Generate Signal</button>
+    <button id="liveBtn">📍 Live Signal</button>
+    <button id="futureBtn">⏳ Future Signals</button>
+    <button id="generateBtn">⚡ Generate Signal</button>
   </div>
 
   <div id="signalBox">Please select a mode and click Generate Signal.</div>
 
+  <!-- ✅ JavaScript at end of body ensures it loads AFTER HTML -->
   <script>
     let mode = "live";
 
@@ -114,6 +115,13 @@
         }
       }, 1200);
     }
+
+    // ✅ Attach events AFTER everything is loaded
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("liveBtn").onclick = () => setMode("live");
+      document.getElementById("futureBtn").onclick = () => setMode("future");
+      document.getElementById("generateBtn").onclick = generateSignal;
+    });
   </script>
 </body>
 </html>
