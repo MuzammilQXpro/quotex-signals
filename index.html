@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muzammil QX - Quotex Live Signals</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #58a6ff;
+      margin-bottom: 10px;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    .signal-box {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      background: #161b22;
+      box-shadow: 0 0 10px #58a6ff;
+    }
+    .buy { color: #00ff00; font-weight: bold; font-size: 24px; }
+    .sell { color: #ff4c4c; font-weight: bold; font-size: 24px; }
+    .future-signals { text-align: left; margin-top: 20px; }
+    .pair-label { font-weight: bold; margin-top: 20px; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Muzammil QX – Quotex Live Signals</h1>
+
+  <label>Select Pair:</label>
+  <select id="pair">
+    <option value="btcusdt">BTC/USDT</option>
+    <option value="ethusdt">ETH/USDT</option>
+    <option value="eurusdt">EUR/USDT</option>
+    <option value="gbpusdt">GBP/USDT</option>
+    <option value="usdjpy">USD/JPY</option>
+    <option value="audusdt">AUD/USDT</option>
+    <option value="usdcad">USD/CAD</option>
+    <option value="eurgbp">EUR/GBP</option>
+    <option value="eurjpy">EUR/JPY</option>
+  </select>
+
+  <label>Signal Type:</label>
+  <select id="mode">
+    <option value="live">Live</option>
+    <option value="future">Future</option>
+  </select>
+
+  <br>
+  <button onclick="generateSignal()">Generate Signal</button>
+
+  <div class="signal-box" id="result">Waiting for signal...</div>
+  <div id="futureResults" class="future-signals"></div>
+
+  <script>
+    async function fetchCandles(symbol, limit = 100) {
+      const url = https://api.binance.com/api/v3/klines?symbol=${symbol.toUpperCase()}&interval=1m&limit=${limit};
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.map(d => ({
+        time: d[0],
+        open: parseFloat(d[1]),
+        high: parseFloat(d[2]),
+        low: parseFloat(d[3]),
+        close: parseFloat(d[4])
+      }));
+    }
+
+    function calculateEMA(data, period) {
+      const k = 2 / (period + 1);
+      let emaArray = [];
+      let ema = data.slice(0, period).reduce((sum, v) => sum + v, 0) / period;
+      emaArray[period - 1] = ema;
+      for (let i = period; i < data.length; i++) {
+        ema = data[i] * k + ema * (1 - k);
+        emaArray[i] = ema;
+      }
+      return emaArray;
+    }
+
+    function calculateMACD(prices) {
+      const ema12 = calculateEMA(prices, 12);
+      const ema26 = calculateEMA(prices, 26);
+      const macd = ema12.map((val, i) => val !== undefined && ema26[i] !== undefined ? val - ema26[i] : null);
+      const signal = calculateEMA(macd.filter(v => v !== null), 9);
+      return { macd, signal };
+    }
+
+    function calculateRSI(closes, period = 14) {
+      let gains = 0, losses = 0;
+      for (let i = 1; i <= period; i++) {
+        const change = closes[i] - closes[i - 1];
+        if (change >= 0) gains += change;
+        else losses -= change;
+      }
+      let rs = gains / losses;
+      let rsi = [100 - 100 / (1 + rs)];
+
+      for (let i = period + 1; i < closes.length; i++) {
+        const change = closes[i] - closes[i - 1];
+        if (change >= 0) {
+          gains = (gains * (period - 1) + change) / period;
+          losses = (losses * (period - 1)) / period;
+        } else {
+          gains = (gains * (period - 1)) / period;
+          losses = (losses * (period - 1) - change) / period;
+        }
+        rs = gains / losses;
+        rsi.push(100 - 100 / (1 + rs));
+      }
+
+      return rsi;
+    }
+
+    function getSignal(macd, signal, rsi) {
+      const macdLatest = macd[macd.length - 1];
+      const signalLatest = signal[signal.length - 1];
+      const rsiLatest = rsi[rsi.length - 1];
+
+      if (macdLatest > signalLatest && rsiLatest < 70 && rsiLatest > 30) return 'CALL';
+      if (macdLatest < signalLatest && rsiLatest < 70 && rsiLatest > 30) return 'PUT';
+      return 'No Clear Signal';
+    }
+
+    async function generateSignal() {
+      const pair = document.getElementById("pair").value;
+      const mode = document.getElementById("mode").value;
+      const result = document.getElementById("result");
+      const futureDiv = document.getElementById("futureResults");
+      result.innerHTML = "Generating signal...";
+      futureDiv.innerHTML = "";
+
+      const candles = await fetchCandles(pair, 100);
+      const closes = candles.map(c => c.close);
+      const { macd, signal } = calculateMACD(closes);
+      const rsi = calculateRSI(closes);
+
+      if (mode === "live") {
+        const finalSignal = getSignal(macd, signal, rsi);
+        result.innerHTML = finalSignal === 'CALL' ? <div class='buy'>CALL</div> : 
+                           finalSignal === 'PUT' ? <div class='sell'>PUT</div> : 
+                           <div style='color:orange'>No Clear Signal</div>;
+      } else {
+        result.innerHTML = "Future signals (next 10 mins):";
+        for (let i = 0; i < 10; i++) {
+          const slice = closes.slice(0, closes.length - 10 + i + 1);
+          const { macd: m, signal: s } = calculateMACD(slice);
+          const r = calculateRSI(slice);
+          const futureSignal = getSignal(m, s, r);
+          const time = new Date(candles[candles.length - 10 + i].time).toLocaleTimeString();
+          futureDiv.innerHTML += <p><strong>${time}</strong> — <span style="color:${futureSignal === 'CALL' ? 'lime' : futureSignal === 'PUT' ? 'red' : 'orange'}">${futureSignal}</span></p>;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
