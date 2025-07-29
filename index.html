@@ -31,7 +31,11 @@
     document.getElementById('genBtn').onclick = () => {
       if (!mode) return document.getElementById('output').innerText = '⚠ Please select mode first';
       const now = new Date(), h = String(now.getHours()).padStart(2,'0'), m = String(now.getMinutes()).padStart(2,'0');
-      const time = ${h}:${m} PKT;
+      const time = const time = new Date().toLocaleTimeString('en-GB', {
+  timeZone: 'Asia/Karachi',
+  hour: '2-digit',
+  minute: '2-digit'
+});
       const pairs = ['EURUSD','GBPUSD','USDJPY','EURGBP','AUDUSD'];
       const dir = Math.random()>0.5?'⬆️ Buy':'⬇️ Sell';
       const acc = Math.floor(Math.random()*10)+90;
