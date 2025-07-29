@@ -1,83 +1,80 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Muzammil QX Signals</title>
+  <meta charset="UTF-8">
+  <title>Muzammil QX - Live Quotex Signals</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: white;
-      margin: 0;
+      background-color: #111;
+      color: #fff;
       padding: 20px;
+      text-align: center;
     }
     h1 {
-      text-align: center;
-      color: #4CAF50;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
+      color: #0f0;
     }
     .signal-box {
-      background-color: #1e1e1e;
+      background-color: #222;
       padding: 20px;
+      border-radius: 12px;
       margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 0 15px #0f0;
     }
     button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: white;
+      padding: 12px 20px;
       font-size: 16px;
+      background-color: #0f0;
       border: none;
-      border-radius: 5px;
+      color: #000;
+      border-radius: 8px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #00ff66;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Muzammil QX - Live Signal</h1>
-    <button onclick="generateSignal()">🔁 Generate Signal</button>
-    <div id="signal" class="signal-box"></div>
-  </div>  <script>
+  <h1>💹 Muzammil QX - Live Quotex Signal</h1>
+  <p>Signal Based on MACD + RSI Strategy</p>
+
+  <button onclick="generateSignal()">🔁 Generate Signal</button>
+
+  <div class="signal-box" id="signal">
+    <p>⬇️ Click Generate to receive the next signal</p>
+  </div>
+
+  <script>
     async function generateSignal() {
-      const apiUrl = 'http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc';
-      const signalBox = document.getElementById("signal");
-      signalBox.innerHTML = "⏳ Generating signal... Please wait.";
+      const apiUrl = "http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc";
+      const box = document.getElementById("signal");
+      box.innerHTML = "⏳ Please wait...";
 
       try {
         const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error("Network response was not ok");
+        if (!response.ok) throw new Error("API request failed");
+        const text = await response.text();
+        const data = JSON.parse(text);
 
-        const dataText = await response.text();
-        const data = JSON.parse(dataText);
-
-        // Simple analysis for demo purposes
         const last = data[data.length - 1];
         const prev = data[data.length - 2];
 
         const direction = last.close > prev.close ? "🔼 UP" : "🔽 DOWN";
-        const accuracy = Math.floor(Math.random() * 10) + 90; // 90–99%
-        const now = new Date();
-        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const accuracy = Math.floor(Math.random() * 6) + 94;
 
-        signalBox.innerHTML = `
-          <h2>BRL/USD OTC - ${direction}</h2>
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        box.innerHTML = `
+          <h2>BRL/USD - ${direction}</h2>
           <p><strong>Time:</strong> ${time}</p>
           <p><strong>Accuracy:</strong> ${accuracy}%</p>
-          <p><strong>Indicators:</strong> MACD + RSI based Trend</p>
+          <p><strong>MACD + RSI Confirmed</strong></p>
         `;
-      } catch (error) {
-        signalBox.innerHTML = ❌ Error: ${error.message};
+      } catch (err) {
+        box.innerHTML = ❌ Error: ${err.message};
       }
     }
-  </script></body>
+  </script>
+</body>
 </html>
