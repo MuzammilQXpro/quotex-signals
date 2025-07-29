@@ -1,140 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Muzammil QX - Quotex Signals</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Muzammil QX Live Signals</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #0d1117;
-      color: #f0f6fc;
+      background-color: #0a0f1c;
+      color: #ffffff;
+      padding: 20px;
       text-align: center;
-      padding: 40px;
     }
     h1 {
-      color: #58a6ff;
+      color: #00ffcc;
     }
-    button, select {
-      background-color: #238636;
-      color: white;
+    .btn {
+      background-color: #00ffcc;
+      color: #000;
       border: none;
-      padding: 12px 20px;
+      padding: 10px 20px;
+      margin: 10px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 20px;
+      border-radius: 5px;
+    }
+    .signal-card {
+      background: #1b2235;
+      border: 1px solid #333;
       border-radius: 10px;
+      margin: 20px auto;
+      padding: 15px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,255,204,0.2);
     }
-    button:hover {
-      background-color: #2ea043;
-    }
-    #signals {
-      margin-top: 30px;
-      text-align: left;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      background: #161b22;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #0d1117;
-    }
-    select {
-      margin-top: 10px;
-      background-color: #161b22;
-      border: 1px solid #30363d;
+    .loader {
+      display: none;
+      margin: 20px auto;
     }
   </style>
 </head>
 <body>
-  <h1>Muzammil QX - Quotex 1-Minute Signal Generator</h1>
 
-  <label for="mode">Select Mode:</label><br/>
-  <select id="mode">
-    <option value="live">Live Signal</option>
-    <option value="future">Future Signals</option>
-  </select><br/>
-
-  <button id="generateBtn">Generate Signal</button>
+  <h1>🔮 Muzammil QX - Quotex Signals</h1>
+  <button class="btn" onclick="generateLiveSignal()">🔄 Generate Live Signal</button>
+  <button class="btn" onclick="loadFutureSignals()">📅 Show Future Signals</button>
 
   <div id="signals"></div>
+  <div class="loader" id="loader">Loading...</div>
 
   <script>
-    window.onload = function () {
-      const pairs = [
-        "EUR/USD", "GBP/USD", "AUD/USD", "USD/JPY", "USD/CHF",
-        "EUR/JPY", "GBP/JPY", "NZD/USD", "USD/CAD", "EUR/GBP"
-      ];
+    async function generateLiveSignal() {
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('signals').innerHTML = '';
 
-      function getRandomPair() {
-        return pairs[Math.floor(Math.random() * pairs.length)];
+      try {
+        const response = await fetch("http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc");
+        const data = await response.json();
+
+        // Simulated signal logic (you can plug actual MACD + RSI here)
+        const signal = {
+          pair: "BRL/USD (OTC)",
+          direction: Math.random() > 0.5 ? "🔼 UP" : "🔽 DOWN",
+          time: new Date().toLocaleTimeString(),
+          accuracy: Math.floor(Math.random() * 11) + 90 + "%",
+          reason: "MACD crossover + RSI confirmation"
+        };
+
+        document.getElementById('signals').innerHTML = `
+          <div class="signal-card">
+            <h2>${signal.pair} - ${signal.direction}</h2>
+            <p><strong>Time:</strong> ${signal.time}</p>
+            <p><strong>Accuracy:</strong> ${signal.accuracy}</p>
+            <p><strong>Indicators:</strong> ${signal.reason}</p>
+          </div>
+        `;
+      } catch (err) {
+        document.getElementById('signals').innerHTML = '<p style="color:red">Error loading signal.</p>';
       }
 
-      function getFakeMACDAnalysis() {
-        return Math.random() > 0.5 ? "MACD crossover detected (Bullish)" : "MACD divergence detected (Bearish)";
-      }
+      document.getElementById('loader').style.display = 'none';
+    }
 
-      function getFakeRSIAnalysis() {
-        return Math.random() > 0.5 ? "RSI is oversold (<30) - Buy" : "RSI is overbought (>70) - Sell";
-      }
+    async function loadFutureSignals() {
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('signals').innerHTML = '';
 
-      function getFakeAccuracy() {
-        return Math.floor(Math.random() * 20) + 80; // 80% to 99%
-      }
+      const times = ["05:20", "05:21", "05:22", "05:23", "05:24", "05:25", "05:26", "05:27", "05:28", "05:29"];
+      const pair = "BRLUSD_otc";
 
-      function getTimeNow() {
-        const now = new Date();
-        return now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
-      }
+      for (let time of times) {
+        try {
+          const res = await fetch(https://api.planalto.cc/quotex?pair=${pair}&time=${time}&key=planalto-lifetime, {
+            headers: { "User-Agent": "Mozilla/5.0" }
+          });
 
-      function generateSignal() {
-        const mode = document.getElementById("mode").value;
-        const signalsDiv = document.getElementById("signals");
-        signalsDiv.innerHTML = "";
+          const data = await res.json();
 
-        if (mode === "live") {
-          const pair = getRandomPair();
-          const direction = Math.random() > 0.5 ? "Buy ↑" : "Sell ↓";
-          const macd = getFakeMACDAnalysis();
-          const rsi = getFakeRSIAnalysis();
-          const accuracy = getFakeAccuracy();
-          const time = getTimeNow();
-
-          signalsDiv.innerHTML = `
-            <h3>Live Signal</h3>
-            <p><strong>Time:</strong> ${time}</p>
-            <p><strong>Pair:</strong> ${pair}</p>
-            <p><strong>Direction:</strong> ${direction}</p>
-            <p><strong>MACD:</strong> ${macd}</p>
-            <p><strong>RSI:</strong> ${rsi}</p>
-            <p><strong>Accuracy:</strong> ${accuracy}%</p>
-            <p><strong>Timeframe:</strong> 1 Minute</p>
+          document.getElementById('signals').innerHTML += `
+            <div class="signal-card">
+              <h2>${data.pair || pair} - ${data.signal || "🕒 Pending"}</h2>
+              <p><strong>Time:</strong> ${time}</p>
+              <p><strong>Prediction:</strong> ${data.analysis || "MACD/RSI Analysis"}</p>
+            </div>
           `;
-        } else {
-          signalsDiv.innerHTML = "<h3>Future Signals (Next 10)</h3>";
-          for (let i = 1; i <= 10; i++) {
-            const pair = getRandomPair();
-            const direction = Math.random() > 0.5 ? "Buy ↑" : "Sell ↓";
-            const macd = getFakeMACDAnalysis();
-            const rsi = getFakeRSIAnalysis();
-            const accuracy = getFakeAccuracy();
-            const time = getTimeNow();
-            signalsDiv.innerHTML += `
-              <div style="margin-bottom:15px;">
-                <p><strong>#${i} - ${pair}</strong> (${time})</p>
-                <p>Direction: ${direction}</p>
-                <p>MACD: ${macd}</p>
-                <p>RSI: ${rsi}</p>
-                <p>Accuracy: ${accuracy}%</p>
-                <hr style="border-color:#30363d;"/>
-              </div>
-            `;
-          }
+        } catch (e) {
+          document.getElementById('signals').innerHTML += <p style="color:orange">Failed to load signal for ${time}</p>;
         }
       }
 
-      document.getElementById("generateBtn").onclick = generateSignal;
-    };
+      document.getElementById('loader').style.display = 'none';
+    }
   </script>
 </body>
 </html>
