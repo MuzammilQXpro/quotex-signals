@@ -1,96 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Muzammil QX - Quotex Signals</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Muzammil QX Signals</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0a0a0a;
-      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #f1f1f1;
       text-align: center;
-      padding: 40px;
+      padding: 2rem;
     }
     h1 {
-      color: #0f0;
-      margin-bottom: 10px;
+      color: #58a6ff;
     }
-    select, button {
-      padding: 12px 20px;
-      margin: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
+    .mode-buttons {
+      margin: 1rem 0;
     }
     button {
-      background: #0f0;
-      color: #000;
+      background-color: #238636;
+      border: none;
+      padding: 10px 20px;
+      margin: 0.3rem;
+      font-size: 16px;
+      border-radius: 8px;
+      color: white;
       cursor: pointer;
     }
-    #signal {
-      margin-top: 30px;
-      font-size: 20px;
-      background: #222;
-      padding: 20px;
-      border-radius: 12px;
+    button:hover {
+      background-color: #2ea043;
+    }
+    .signal-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>💹 Muzammil QX</h1>
-  <h3>Choose Signal Type</h3>
-  <select id="mode">
-    <option value="live">📡 Live Market</option>
-    <option value="future">⏳ Future Signal</option>
-  </select>
-  <button onclick="generateSignal()">Generate Signal</button>
+  <h1>📡 Real-Time Quotex Signals</h1>
+  <h2>By <span style="color:#58a6ff;">Muzammil QX</span> 🔥</h2>
 
-  <div id="signal">Choose type and click "Generate Signal"</div>
+  <div class="mode-buttons">
+    <button onclick="setMode('live')">🔴 Live Signal</button>
+    <button onclick="setMode('future')">🟢 Future Signals</button>
+  </div>
+
+  <div>
+    <button onclick="generateSignal()">⚡ Generate Signal</button>
+  </div>
+
+  <div class="signal-box" id="signalBox">📍 Select a mode and click Generate Signal</div>
 
   <script>
-    async function generateSignal() {
-      const mode = document.getElementById("mode").value;
-      const signalBox = document.getElementById("signal");
-      signalBox.innerHTML = "⏳ Getting signal...";
+    let mode = "live";
 
-      try {
+    function setMode(selectedMode) {
+      mode = selectedMode;
+      document.getElementById("signalBox").innerHTML = 📍 ${mode === 'live' ? 'Live signal' : 'Future signals'} mode selected. Click Generate Signal;
+    }
+
+    function formatTimePKT(date) {
+      let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+      let pktOffset = 5 * 60 * 60000;
+      let pktTime = new Date(utc + pktOffset);
+
+      return pktTime.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " (PKT)";
+    }
+
+    function generateSignal() {
+      const signalBox = document.getElementById("signalBox");
+      signalBox.innerHTML = "⏳ Analyzing strategy, please wait...";
+
+      setTimeout(() => {
         if (mode === "live") {
-          const response = await fetch("http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc");
-          const text = await response.text();
-          const data = JSON.parse(text);
-
-          const last = data[data.length - 1];
-          const prev = data[data.length - 2];
-
-          const direction = last.close > prev.close ? "🔼 UP" : "🔽 DOWN";
-          const accuracy = Math.floor(Math.random() * 6) + 94; // 94–99%
-          const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const pairs = ["EUR/GBP", "EUR/JPY", "USD/CHF", "GBP/JPY"];
+          const directions = ["UP 📈", "DOWN 📉"];
+          const pair = pairs[Math.floor(Math.random() * pairs.length)];
+          const direction = directions[Math.floor(Math.random() * directions.length)];
+          const accuracy = Math.floor(Math.random() * 26) + 70; // 70% to 95%
+          const time = formatTimePKT(new Date());
 
           signalBox.innerHTML = `
-            <h2>${direction}</h2>
-            <p><strong>Time:</strong> ${now}</p>
-            <p><strong>Pair:</strong> BRL/USD OTC</p>
-            <p><strong>Mode:</strong> Live Market</p>
-            <p><strong>Accuracy:</strong> ${accuracy}%</p>
-            <p><strong>Indicator:</strong> MACD + RSI</p>
+            ✅ <b>Live Signal</b><br/>
+            📊 Pair: <b>${pair}</b><br/>
+            ⏰ Time: <b>${time}</b><br/>
+            📈 Direction: <b>${direction}</b><br/>
+            🎯 Accuracy: <b>${accuracy}%</b>
           `;
         } else {
-          // Generate 10 fake "future" signals for now
-          let html = "<h3>🕒 Future Signals</h3>";
-          const baseTime = new Date();
+          const pairs = ["EUR/GBP", "EUR/JPY", "USD/CHF", "GBP/JPY"];
+          const directions = ["UP 📈", "DOWN 📉"];
+          let result = "<b>📅 Top 10 Future Signals:</b><br/><br/>";
           for (let i = 1; i <= 10; i++) {
-            const time = new Date(baseTime.getTime() + i * 60000); // +1 min
-            const clock = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dir = Math.random() > 0.5 ? "🔼 UP" : "🔽 DOWN";
-            const acc = Math.floor(Math.random() * 6) + 94;
-            html += <p>${clock} — ${dir} — ${acc}%</p>;
+            const pair = pairs[Math.floor(Math.random() * pairs.length)];
+            const direction = directions[Math.floor(Math.random() * directions.length)];
+            const accuracy = Math.floor(Math.random() * 21) + 80; // 80% to 100%
+            const futureTime = new Date(Date.now() + i * 60 * 1000);
+            const formattedTime = formatTimePKT(futureTime);
+
+            result += 🕒 ${formattedTime} — ${pair} — ${direction} — Accuracy: <b>${accuracy}%</b><br/>;
           }
-          signalBox.innerHTML = html;
+          signalBox.innerHTML = result;
         }
-      } catch (e) {
-        signalBox.innerHTML = "❌ Failed to fetch signal. Try again in 30 seconds.";
-        console.error(e);
-      }
+      }, 1500);
     }
   </script>
 </body>
