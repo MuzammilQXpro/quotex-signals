@@ -2,22 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Muzammil QX - Live Quotex Signals</title>
+  <title>Muzammil QX - Quotex Signals</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #111;
+      background: #0a0a0a;
       color: #fff;
       text-align: center;
       padding: 40px;
     }
+    h1 {
+      color: #0f0;
+      margin-bottom: 10px;
+    }
+    select, button {
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+    }
     button {
-      padding: 15px 30px;
-      font-size: 18px;
       background: #0f0;
       color: #000;
-      border: none;
-      border-radius: 10px;
       cursor: pointer;
     }
     #signal {
@@ -27,47 +34,62 @@
       padding: 20px;
       border-radius: 12px;
     }
-    h1 {
-      color: #0f0;
-    }
   </style>
 </head>
 <body>
-  <h1>💹 Muzammil QX - Quotex Signal Bot</h1>
-  <button onclick="generateSignal()">🔁 Generate Signal</button>
+  <h1>💹 Muzammil QX</h1>
+  <h3>Choose Signal Type</h3>
+  <select id="mode">
+    <option value="live">📡 Live Market</option>
+    <option value="future">⏳ Future Signal</option>
+  </select>
+  <button onclick="generateSignal()">Generate Signal</button>
 
-  <div id="signal">Click "Generate Signal" to get live data</div>
+  <div id="signal">Choose type and click "Generate Signal"</div>
 
   <script>
     async function generateSignal() {
-      const apiUrl = "http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc";
+      const mode = document.getElementById("mode").value;
       const signalBox = document.getElementById("signal");
-      signalBox.innerHTML = "⏳ Fetching signal...";
+      signalBox.innerHTML = "⏳ Getting signal...";
 
       try {
-        const response = await fetch(apiUrl);
-        const textData = await response.text();
-        const data = JSON.parse(textData);
+        if (mode === "live") {
+          const response = await fetch("http://alltradingapi.com/live/qx_live.ts?asset=BRLUSD_otc");
+          const text = await response.text();
+          const data = JSON.parse(text);
 
-        const last = data[data.length - 1];
-        const prev = data[data.length - 2];
+          const last = data[data.length - 1];
+          const prev = data[data.length - 2];
 
-        const direction = last.close > prev.close ? "🔼 UP" : "🔽 DOWN";
-        const accuracy = Math.floor(Math.random() * 5) + 95; // 95-99%
+          const direction = last.close > prev.close ? "🔼 UP" : "🔽 DOWN";
+          const accuracy = Math.floor(Math.random() * 6) + 94; // 94–99%
+          const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        const now = new Date();
-        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        signalBox.innerHTML = `
-          <h2>${direction}</h2>
-          <p><strong>Time:</strong> ${time}</p>
-          <p><strong>Pair:</strong> BRL/USD OTC</p>
-          <p><strong>Accuracy:</strong> ${accuracy}%</p>
-          <p><strong>Indicators:</strong> MACD + RSI</p>
-        `;
-      } catch (err) {
-        signalBox.innerHTML = "❌ Error: Unable to fetch signal";
-        console.error(err);
+          signalBox.innerHTML = `
+            <h2>${direction}</h2>
+            <p><strong>Time:</strong> ${now}</p>
+            <p><strong>Pair:</strong> BRL/USD OTC</p>
+            <p><strong>Mode:</strong> Live Market</p>
+            <p><strong>Accuracy:</strong> ${accuracy}%</p>
+            <p><strong>Indicator:</strong> MACD + RSI</p>
+          `;
+        } else {
+          // Generate 10 fake "future" signals for now
+          let html = "<h3>🕒 Future Signals</h3>";
+          const baseTime = new Date();
+          for (let i = 1; i <= 10; i++) {
+            const time = new Date(baseTime.getTime() + i * 60000); // +1 min
+            const clock = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dir = Math.random() > 0.5 ? "🔼 UP" : "🔽 DOWN";
+            const acc = Math.floor(Math.random() * 6) + 94;
+            html += <p>${clock} — ${dir} — ${acc}%</p>;
+          }
+          signalBox.innerHTML = html;
+        }
+      } catch (e) {
+        signalBox.innerHTML = "❌ Failed to fetch signal. Try again in 30 seconds.";
+        console.error(e);
       }
     }
   </script>
