@@ -59,19 +59,19 @@
 
   <div id="signalBox">Please select a mode and click Generate Signal.</div>
 
-  <!-- ✅ JavaScript at end of body ensures it loads AFTER HTML -->
+  <!-- ✅ JavaScript -->
   <script>
     let mode = "live";
 
     function setMode(selectedMode) {
       mode = selectedMode;
-      document.getElementById("signalBox").innerHTML = 📍 ${mode === 'live' ? 'Live Signal' : 'Future Signals'} mode selected. Click Generate Signal;
+      document.getElementById("signalBox").innerHTML = 📍 ${mode === 'live' ? 'Live Signal' : 'Future Signals'} mode selected. Click Generate Signal.;
     }
 
     function formatTimePKT(date) {
-      let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-      let pktOffset = 5 * 60 * 60000;
-      let pktTime = new Date(utc + pktOffset);
+      const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+      const pktOffset = 5 * 60 * 60000;
+      const pktTime = new Date(utc + pktOffset);
 
       return pktTime.toLocaleTimeString("en-GB", {
         hour: "2-digit",
@@ -90,7 +90,7 @@
         if (mode === "live") {
           const pair = pairs[Math.floor(Math.random() * pairs.length)];
           const direction = directions[Math.floor(Math.random() * directions.length)];
-          const accuracy = Math.floor(Math.random() * 26) + 70; // 70% to 95%
+          const accuracy = Math.floor(Math.random() * 26) + 70; // 70–95%
           const time = formatTimePKT(new Date());
 
           signalBox.innerHTML = `
@@ -105,7 +105,7 @@
           for (let i = 1; i <= 10; i++) {
             const pair = pairs[Math.floor(Math.random() * pairs.length)];
             const direction = directions[Math.floor(Math.random() * directions.length)];
-            const accuracy = Math.floor(Math.random() * 21) + 80; // 80% to 100%
+            const accuracy = Math.floor(Math.random() * 21) + 80; // 80–100%
             const futureTime = new Date(Date.now() + i * 60 * 1000);
             const formattedTime = formatTimePKT(futureTime);
 
@@ -113,11 +113,10 @@
           }
           signalBox.innerHTML = result;
         }
-      }, 1200);
+      }, 1000);
     }
 
-    // ✅ Attach events AFTER everything is loaded
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("liveBtn").onclick = () => setMode("live");
       document.getElementById("futureBtn").onclick = () => setMode("future");
       document.getElementById("generateBtn").onclick = generateSignal;
