@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -6,111 +6,114 @@
   <title>Muzammil QX Signals</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0d1117;
-      color: #f1f1f1;
-      text-align: center;
-      padding: 2rem;
+      font-family: Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
     }
+
     h1 {
-      color: #58a6ff;
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #38bdf8;
     }
-    .mode-buttons {
-      margin: 1rem 0;
-    }
+
     button {
-      background-color: #238636;
+      background-color: #38bdf8;
       border: none;
+      color: #0f172a;
       padding: 10px 20px;
-      margin: 0.3rem;
-      font-size: 16px;
+      margin: 10px;
       border-radius: 8px;
-      color: white;
+      font-size: 1em;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
+
     button:hover {
-      background-color: #2ea043;
+      background-color: #0ea5e9;
     }
-    .signal-box {
-      background: #161b22;
-      border: 1px solid #30363d;
+
+    #signalBox {
+      margin-top: 30px;
+      padding: 20px;
+      background: #1e293b;
       border-radius: 10px;
-      padding: 1rem;
-      margin-top: 1rem;
+      min-height: 150px;
+      width: 90%;
+      max-width: 500px;
     }
   </style>
 </head>
 <body>
-  <h1>📡 Real-Time Quotex Signals</h1>
-  <h2>By <span style="color:#58a6ff;">Muzammil QX</span> 🔥</h2>
-
-  <div class="mode-buttons">
-    <button onclick="setMode('live')">🔴 Live Signal</button>
-    <button onclick="setMode('future')">🟢 Future Signals</button>
-  </div>
+  <h1>📡 Muzammil QX Signals</h1>
 
   <div>
+    <button onclick="setMode('live')">📍 Live Signal</button>
+    <button onclick="setMode('future')">⏳ Future Signals</button>
     <button onclick="generateSignal()">⚡ Generate Signal</button>
   </div>
 
-  <div class="signal-box" id="signalBox">📍 Select a mode and click Generate Signal</div>
+  <div id="signalBox">Please select a mode and click Generate Signal.</div>
 
- <script>
-  let mode = "live";
+  <script>
+    let mode = "live";
 
-  function setMode(selectedMode) {
-    mode = selectedMode;
-    document.getElementById("signalBox").innerHTML = 📍 ${mode === 'live' ? 'Live signal' : 'Future signals'} mode selected. Click Generate Signal;
-  }
+    function setMode(selectedMode) {
+      mode = selectedMode;
+      document.getElementById("signalBox").innerHTML = 📍 ${mode === 'live' ? 'Live Signal' : 'Future Signals'} mode selected. Click Generate Signal;
+    }
 
-  function formatTimePKT(date) {
-    let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
-    let pktOffset = 5 * 60 * 60000;
-    let pktTime = new Date(utc + pktOffset);
+    function formatTimePKT(date) {
+      let utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+      let pktOffset = 5 * 60 * 60000;
+      let pktTime = new Date(utc + pktOffset);
 
-    return pktTime.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }) + " (PKT)";
-  }
+      return pktTime.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " PKT";
+    }
 
-  function generateSignal() {
-    const signalBox = document.getElementById("signalBox");
-    signalBox.innerHTML = "⏳ Analyzing strategy, please wait...";
+    function generateSignal() {
+      const signalBox = document.getElementById("signalBox");
+      signalBox.innerHTML = "⏳ Generating Signal, please wait...";
 
-    setTimeout(() => {
-      if (mode === "live") {
-        const pairs = ["EUR/GBP", "EUR/JPY", "USD/CHF", "GBP/JPY"];
+      setTimeout(() => {
+        const pairs = ["EUR/GBP", "EUR/JPY", "USD/CHF", "GBP/JPY", "AUD/USD", "USD/CAD"];
         const directions = ["UP 📈", "DOWN 📉"];
-        const pair = pairs[Math.floor(Math.random() * pairs.length)];
-        const direction = directions[Math.floor(Math.random() * directions.length)];
-        const accuracy = Math.floor(Math.random() * 26) + 70; // 70% to 95%
-        const time = formatTimePKT(new Date());
 
-        signalBox.innerHTML = `
-          ✅ <b>Live Signal</b><br/>
-          📊 Pair: <b>${pair}</b><br/>
-          ⏰ Time: <b>${time}</b><br/>
-          📈 Direction: <b>${direction}</b><br/>
-          🎯 Accuracy: <b>${accuracy}%</b>
-        `;
-      } else {
-        const pairs = ["EUR/GBP", "EUR/JPY", "USD/CHF", "GBP/JPY"];
-        const directions = ["UP 📈", "DOWN 📉"];
-        let result = "<b>📅 Top 10 Future Signals:</b><br/><br/>";
-        for (let i = 1; i <= 10; i++) {
+        if (mode === "live") {
           const pair = pairs[Math.floor(Math.random() * pairs.length)];
           const direction = directions[Math.floor(Math.random() * directions.length)];
-          const accuracy = Math.floor(Math.random() * 21) + 80; // 80% to 100%
-          const futureTime = new Date(Date.now() + i * 60 * 1000);
-          const formattedTime = formatTimePKT(futureTime);
+          const accuracy = Math.floor(Math.random() * 26) + 70; // 70% to 95%
+          const time = formatTimePKT(new Date());
 
-          result += 🕒 ${formattedTime} — ${pair} — ${direction} — Accuracy: <b>${accuracy}%</b><br/>;
+          signalBox.innerHTML = `
+            ✅ <b>Live Signal</b><br/>
+            📊 Pair: <b>${pair}</b><br/>
+            ⏰ Time: <b>${time}</b><br/>
+            📈 Direction: <b>${direction}</b><br/>
+            🎯 Accuracy: <b>${accuracy}%</b>
+          `;
+        } else {
+          let result = "<b>📅 Top 10 Future Signals:</b><br/><br/>";
+          for (let i = 1; i <= 10; i++) {
+            const pair = pairs[Math.floor(Math.random() * pairs.length)];
+            const direction = directions[Math.floor(Math.random() * directions.length)];
+            const accuracy = Math.floor(Math.random() * 21) + 80; // 80% to 100%
+            const futureTime = new Date(Date.now() + i * 60 * 1000);
+            const formattedTime = formatTimePKT(futureTime);
+
+            result += 🕒 ${formattedTime} — ${pair} — ${direction} — Accuracy: <b>${accuracy}%</b><br/>;
+          }
+          signalBox.innerHTML = result;
         }
-        signalBox.innerHTML = result;
-      }
-    }, 1500);
-  }
-</script>
+      }, 1200);
+    }
+  </script>
 </body>
 </html>
