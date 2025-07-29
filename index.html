@@ -7,24 +7,22 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f3f4f6;
       text-align: center;
-      background-color: #f0f4f8;
-      margin: 0;
       padding: 20px;
     }
     h1 {
       color: #111827;
-      font-size: 26px;
     }
     .btn {
+      background-color: #1d4ed8;
+      color: white;
+      border: none;
+      border-radius: 6px;
       padding: 10px 20px;
       margin: 10px;
       font-size: 16px;
       cursor: pointer;
-      background-color: #1d4ed8;
-      color: white;
-      border: none;
-      border-radius: 8px;
     }
     .btn:hover {
       background-color: #2563eb;
@@ -32,73 +30,77 @@
     .signal-box {
       margin-top: 30px;
       padding: 20px;
-      background-color: white;
+      background: white;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <h1>📈 Quotex 1-Minute Signals - Muzammil QX</h1>
+  <h1>📊 Muzammil QX Quotex Signals</h1>
 
   <div>
-    <button class="btn" onclick="setMode('live')">Live Signal 🔴</button>
-    <button class="btn" onclick="setMode('future')">Future Signal 🕒</button>
-    <button class="btn" onclick="generateSignal()">Generate Signal ⚡</button>
+    <button class="btn" id="liveBtn">Live Signal 🔴</button>
+    <button class="btn" id="futureBtn">Future Signal 🕒</button>
+    <button class="btn" id="generateBtn">Generate Signal ⚡</button>
   </div>
 
   <div class="signal-box" id="output">
-    ⚠️ No signal generated yet.
+    ⚠️ No signal yet. Select a mode and click Generate.
   </div>
 
   <script>
     let mode = 'live';
 
-    function setMode(selectedMode) {
-      mode = selectedMode;
-      document.getElementById('output').innerHTML = 🔄 Mode set to <strong>${mode.toUpperCase()}</strong>. Now click Generate Signal ⚡;
-    }
+    document.getElementById("liveBtn").addEventListener("click", function() {
+      mode = 'live';
+      document.getElementById("output").innerHTML = "✅ Mode set to <strong>LIVE</strong>. Now click Generate Signal ⚡";
+    });
 
-    function generateSignal() {
+    document.getElementById("futureBtn").addEventListener("click", function() {
+      mode = 'future';
+      document.getElementById("output").innerHTML = "✅ Mode set to <strong>FUTURE</strong>. Now click Generate Signal ⚡";
+    });
+
+    document.getElementById("generateBtn").addEventListener("click", function() {
       const now = new Date();
-      const hours = String(now.getHours()).padStart(2, '0');
-      const minutes = String(now.getMinutes()).padStart(2, '0');
-      const time = ${hours}:${minutes};
+      const hour = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      const time = ${hour}:${min};
 
-      const assets = ['EURUSD', 'GBPUSD', 'USDJPY', 'AUDUSD', 'EURGBP'];
+      const pairs = ['EURUSD', 'USDJPY', 'GBPUSD', 'AUDUSD', 'EURGBP'];
       const directions = ['⬆️ Buy', '⬇️ Sell'];
-      const accuracy = Math.floor(Math.random() * 10) + 90; // 90–99%
+      const accuracy = Math.floor(Math.random() * 10) + 90;
 
-      const randomAsset = assets[Math.floor(Math.random() * assets.length)];
+      const pair = pairs[Math.floor(Math.random() * pairs.length)];
       const direction = directions[Math.floor(Math.random() * directions.length)];
 
-      let message = '';
       if (mode === 'live') {
-        message = `🟢 <strong>LIVE SIGNAL</strong><br>
-                  📌 Pair: <strong>${randomAsset}</strong><br>
-                  ⏰ Time: <strong>${time}</strong><br>
-                  📉 Signal: <strong>${direction}</strong><br>
-                  ✅ Accuracy: <strong>${accuracy}%</strong>`;
+        document.getElementById("output").innerHTML = `
+          🔴 <strong>LIVE SIGNAL</strong><br><br>
+          🕒 Time: <strong>${time}</strong><br>
+          💱 Pair: <strong>${pair}</strong><br>
+          📉 Signal: <strong>${direction}</strong><br>
+          ✅ Accuracy: <strong>${accuracy}%</strong>
+        `;
       } else if (mode === 'future') {
-        let list = '';
-        for (let i = 1; i <= 10; i++) {
-          const futureMinutes = new Date(now.getTime() + i * 60000);
-          const fh = String(futureMinutes.getHours()).padStart(2, '0');
-          const fm = String(futureMinutes.getMinutes()).padStart(2, '0');
+        let msg = <strong>🕒 FUTURE SIGNALS (Next 5 min)</strong><br><br>;
+        for (let i = 1; i <= 5; i++) {
+          const future = new Date(now.getTime() + i * 60000);
+          const fh = String(future.getHours()).padStart(2, '0');
+          const fm = String(future.getMinutes()).padStart(2, '0');
           const ftime = ${fh}:${fm};
-          const fa = assets[Math.floor(Math.random() * assets.length)];
+          const fp = pairs[Math.floor(Math.random() * pairs.length)];
           const fd = directions[Math.floor(Math.random() * directions.length)];
-          const faAcc = Math.floor(Math.random() * 10) + 90;
-          list += ⏰ ${ftime} - ${fa} - ${fd} - ${faAcc}%<br>;
+          const fa = Math.floor(Math.random() * 10) + 90;
+          msg += 🕒 ${ftime} - ${fp} - ${fd} - ${fa}%<br>;
         }
-        message = 🕓 <strong>FUTURE SIGNALS (Next 10 min)</strong><br>${list};
+        document.getElementById("output").innerHTML = msg;
       } else {
-        message = '⚠️ Unknown mode selected.';
+        document.getElementById("output").innerHTML = "❌ Invalid mode selected.";
       }
-
-      document.getElementById('output').innerHTML = message;
-    }
+    });
   </script>
 </body>
 </html>
